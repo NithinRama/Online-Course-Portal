@@ -1,0 +1,172 @@
+var app = require("express")();
+var session = require('express-session');
+var mysql = require("mysql");
+var bodyParser = require('body-parser');
+var http = require('http').Server(app);
+var io = require("socket.io")(http);
+var fs= require("fs")
+
+
+//initialize the session
+app.use(session({
+    secret: "online",
+    resave: true,
+    saveUninitialized: true
+}));
+var session_data;
+
+
+app.use(require("express").static('data'));
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
+
+/* Creating MySQL connection.*/
+var con    =    mysql.createPool({
+      connectionLimit   :   100,
+      host              :   'localhost',
+      user              :   'root',
+      password          :   'prab',
+      database          :   'dbms'
+});
+
+
+app.get("/",function(req,res){
+    res.sendFile(__dirname + '/index.html');
+});
+
+
+/*  Socket connectes ur machine to server */
+
+
+app.post('/login', function (req, res) {
+  session_data=req.session;
+  //console.log(req.param('name')); // depricated
+  data = {
+    name:req.body.name,
+    password:req.body.password,
+  };
+  session_data.password=data.password;
+  session_data.name=data.name;
+  var obj={};
+  var query="select * from student where name='"+data.name+"' and password='"+data.password+"'";
+      con.query(String(query),function(err,rows){
+        if(rows.length > 0){
+          var un=new Buffer(String(rows[0].name)).toString('base64');
+          var ui=new Buffer(String(rows[0].id)).toString('base64');
+          obj.path_name="/home.html#?un="+un+"&ui="+ui;
+          res.write(JSON.stringify(obj));
+          res.end();
+        }else{
+          obj.path_name="invalid";
+          res.write(JSON.stringify(obj));
+          res.end();
+        }
+    });
+});
+
+app.get('/home', function (req, res) {
+  session_data=req.session;
+  if(session_data.name){
+    res.sendFile(__dirname + '/data/home.html');
+  }else{
+    res.redirect('/');
+  }
+});
+
+app.post('/get_list', function (req, res) {
+  var query="select * from user";
+  con.query(String(query),function(err,rows){
+    res.write(JSON.stringify(rows));
+    res.end();
+  });
+});
+
+app.post('/logout', function (req, res) {
+  var query="update user set online = ? where id = ?";
+  con.query(String(query),['N',req.body.id],function(err,rows){});
+  req.session.destroy(function(err){
+  res.end();
+  });
+});
+
+
+app.post("/upload",function(req,res){
+    var multiparty = require('multiparty');
+   var form = new multiparty.Form();
+
+    form.parse(req, function(err, fields, files) {
+       //res.send("name:"+fields.name);
+       
+       var img =files.images[0];
+       var fs = require("fs");
+      // console.log(img.path);
+       fs.readFile(img.path,function(err,data){
+        var path ="/home/prab/Upload/uploads/"+img.originalFilename;
+       // console.log(path);
+        fs.writeFile(path,data,function(error){
+          if(error)console.log("error");
+          res.send("upload success");
+        });
+       });
+    });
+  });
+
+app.post('/register',function(req,res)
+{
+ 
+
+var idnum;
+var prequery="select * from user";
+con.query(String(prequery),function(err,rows)
+  {
+      if(!err)
+         idnum=++rows.length;
+
+  });
+console.log(idnum);
+var data =
+{
+  id: idnum,
+  name: req.body.username,
+  password: req.body.regpass,
+  online: 'N'
+}
+
+ 
+var query = con.query('INSERT INTO user SET ?', data, function(err, result) {
+       if(err)
+        res.end("Erorr");
+      else
+        res.sendFile(__dirname + '/data/back.html');
+        
+
+  
+});
+//console.log(query.sql);
+
+app.post('/redirect',function(req,res)
+  {
+     res.sendFile(__dirname + '/data/index.html');
+
+  });
+
+});
+
+app.post('/message',function(req,res)
+  {
+
+    
+    res.sendFile(__dirname + '/data/chat.html');
+     io.on('connection', function(socket){
+  socket.on('chat message', function(msg){
+    io.emit('chat message',msg);
+  });
+});
+
+  });
+http.listen(3000,function(){
+    console.log("Server Running on 3000");
+});

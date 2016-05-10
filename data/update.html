@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Update Your Profile</title>
+	<style type="text/css">
+input[type=submit]
+  {
+    background-color: red;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+  #pass
+  {
+    background-color: brown;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+
+  }
+  body
+  {
+  	background-color: lightblue;
+  	color: black;
+  }
+	</style>
+</head>
+<body>
+<h1 align="center">Please Update the given Information</h1>
+<form action="/update_done" method="post">
+<label>Department</label><br/>
+<input type="text" placeholder="Type your department here" name="newdept"></input><br/>
+<label>Sem</label><br/>
+<input type="text" placeholder="Type your Semester here" name="newsem"></input><br/>
+<br/>
+<br/>
+<input type="submit" value="Save Changes"></input><br/><br/>
+</form>
+<form action="changepass" method="post">
+<label>Change Your Password If u wish to</label><br/>
+<input type="password" placeholder="New Password" name="newpass"></input><br/>
+<input type="submit" value="Change" id="pass"></input>
+</form>
+
+</body>
+</html>

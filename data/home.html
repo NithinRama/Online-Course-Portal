@@ -1,0 +1,136 @@
+<html ng-app="home">
+  <head>
+    <title>Socket.io</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="css/css2/bootstrap.min.css">
+    <link rel="stylesheet" href="css/css2/font-awesome.min.css">
+    <link href="css/css2/style.css" rel="stylesheet" ><style type="text/css">
+      input[type=submit]
+  {
+    background-color: olive;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+   input[type=file]
+  {
+    background-color: orange;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    
+  }
+  #del
+  {
+    background-color: red;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+
+  }
+  #lg
+  {
+  	padding: 32px;
+
+
+  }
+#g
+{
+	background-color: gold;
+}
+
+#u
+{
+	background-color: blue;
+}
+
+    </style>
+  </head>
+
+  <body ng-controller="home">
+
+    <div class="container" id="g" >
+      <div class="panel panel-default" id="f">
+        <div class="header_info panel-heading" >
+          <div class="rows">
+            <div class="col-md-8 ">
+              <p class="welcome_user">Hello {{name}}</p>              
+            </div>
+          
+            <div class="col-md-2 ">
+              <div class="logout_btn">
+                
+                <a id="logout"  ng-click="logout()">Logout</a>
+                
+  
+                
+                  <div id="lg">
+                <form action="/view" method="post">
+                  <label>View All the Courses You have chosen</label>
+                  <input type="submit" value="View"></input>
+                </form>
+                </div>
+            <form action="/insert" method="post">
+            <label>Add a new Course to your account</label><br/>
+            <input type="Text" placeholder="Type the course name here" name="coursename"></input>
+            <input type="submit" value="Add"></input>
+            </form>
+
+            <form action="/delete" method="post">
+            <label>Delete a Course from your account</label><br/>
+             <input type="Text" placeholder="Type the course name here" name="deletename"></input>
+            <input type="submit" value="Delete" id="del"></input>
+            </form>
+            <form action="/allcourses" method="post">
+            	<label>View All the courses offered by your department</label>
+            	<input type="submit" value="show"></input>
+            </form>
+             <form action="/deptuploads" method="post">
+             	<label>View All the notes available for a course</label>
+             	<input type="text" placeholder="search...." name="dept"></input>
+             	<input type="submit" value="search"></input>
+             </form>
+             <form action="teacher" method="post">
+             <label>Search for details about a professor</label>
+             <input type="text" placeholder="Name of Professor" name="prof"></input>
+             <input type="submit" value="search"></input>
+             </form>
+
+          </div>
+        </div>
+       
+      </div>
+    </div>
+
+    <form action="/update" method="post">
+                <input type="submit" value="Update Profile"></input>
+                 </form >
+<form action="/upload" method="post" enctype="multipart/form-data">
+                <br/><br/>
+                <input type="file" name="images"> </input>
+                <input type="submit" value="Upload File" onmouseover="style='background-color:blue'" onmouseout="style='background-color:olive'"></input>
+ </form>
+
+<form action="/my_files" method="post">
+<label>View the files you have uploaded</label>
+<input type="submit" value="My Uploads" id="u"></input>
+</form>
+
+
+             
+
+  </body>
+  <script src = "js/jquery.min.js"></script>
+  <script src = "js/bootstrap.min.js"></script>
+  <script src = "js/angular.min.js"></script>
+  <script src = "js/home.js"></script>
+</html>
